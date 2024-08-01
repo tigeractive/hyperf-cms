@@ -40,8 +40,12 @@ class MenusModel extends BaseModel
 
     public function getMenuList($where)
     {
-        return self::query()->where($where)
-            ->orderBy('sort_id', 'DESC')
+        if (!empty($where)) {
+            return self::query()->where($where)
+                ->orderBy('sort_id', 'DESC')
+                ->get();
+        }
+        return self::query()->orderBy('sort_id', 'DESC')
             ->get();
     }
 }

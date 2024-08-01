@@ -16,7 +16,6 @@ use App\Exception\ParameterException;
 use App\helpers\Common;
 use Hyperf\Di\Annotation\Inject;
 use Hyperf\HttpServer\Contract\RequestInterface;
-use Hyperf\Validation\Contract\ValidatorFactoryInterface;
 
 class BaseValidate
 {
@@ -41,9 +40,6 @@ class BaseValidate
 
     protected $tmpRule = [];
 
-    #[Inject]
-    private RequestInterface $request;
-
     public function scene($name)
     {
         $this->currentScene = $name;
@@ -56,7 +52,7 @@ class BaseValidate
         return $this->error;
     }
 
-    public function goCheck($validatorFactory, $scene = '')
+    public function goCheck($validatorFactory, RequestInterface $request, $scene = '')
     {
         if ($this->getScence($scene)) {
             if (! empty($this->tmpRule)) {
@@ -83,7 +79,7 @@ class BaseValidate
             $this->presentRule = $this->rule;
         }
 
-        $data = Common::trimArr($this->request->all());
+        $data = Common::trimArr($request->all());
 
         $validator = $validatorFactory->make($data, $this->presentRule, $this->message);
 

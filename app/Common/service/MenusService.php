@@ -13,6 +13,7 @@ declare(strict_types=1);
 namespace App\Common\service;
 
 use App\Common\model\mysql\MenusModel;
+use App\Exception\MenuParentException;
 use App\helpers\Common;
 
 class MenusService extends BaseService
@@ -54,13 +55,29 @@ class MenusService extends BaseService
             }
             return $v;
         }, $list);
+
+        if (! empty($data['menu_name'])) {
+            return $list;
+        }
+
+        if (! empty($data['menu_state']) && $data['menu_state'] == 2) {
+            return $list;
+        }
+
         // 将组织的数据进行处理，子类在父类下面
-        return empty($params['menu_name']) ? Common::unlimitedForLayer($list, 'children', 'menu_id') : $list;
+        return Common::unlimitedForLayer($list, 'children', 'menu_id');
+    }
+
+    public function getAllMenuList()
+    {
+        $list = $this->model->getMenuList('')->toArray();
+        // 将组织的数据进行处理，子类在父类下面
+        return Common::unlimitedForLayer($list, 'children', 'menu_id');
     }
 
     public function add($data)
     {
-        if (!empty($data['parent_id_list'])) {
+        if (! empty($data['parent_id_list'])) {
             $parentIdArr = $data['parent_id_list'];
             $data['parent_id'] = $parentIdArr[count($parentIdArr) - 1];
             $data['parent_id_list'] = implode(',', $data['parent_id_list']);
@@ -73,8 +90,11 @@ class MenusService extends BaseService
 
     public function edit($data)
     {
-        if (!empty($data['parent_id_list'])) {
+        if (! empty($data['parent_id_list'])) {
             $parentIdArr = $data['parent_id_list'];
+            if (in_array($data['menu_id'], $parentIdArr)) {
+                throw new MenuParentException();
+            }
             $data['parent_id'] = $parentIdArr[count($parentIdArr) - 1];
             $data['parent_id_list'] = implode(',', $data['parent_id_list']);
         } else {
@@ -110,5 +130,4 @@ class MenusService extends BaseService
         }
         return false;
     }
-
 }

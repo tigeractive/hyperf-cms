@@ -31,6 +31,7 @@ Router::addGroup('/admin', function () {
 
     // 菜单
     Router::get('/menus/list', [MenusController::class, 'list'], ['middleware' => [JwtMiddleware::class]]);
+    Router::get('/menus/parent-list', [MenusController::class, 'parentList'], ['middleware' => [JwtMiddleware::class]]);
     Router::post('/menus/operate', [MenusController::class, 'operate'], ['middleware' => [JwtMiddleware::class]]);
     Router::post('/menus/del', [MenusController::class, 'del'], ['middleware' => [JwtMiddleware::class]]);
 });

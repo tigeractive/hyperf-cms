@@ -20,7 +20,8 @@ use Hyperf\Validation\Event\ValidatorFactoryResolved;
 use Hyperf\Validation\Validator;
 
 #[Listener]
-class ValidatorFactoryResolvedListener implements ListenerInterface
+class
+UserUpdateUniqueListener implements ListenerInterface
 {
     public function listen(): array
     {

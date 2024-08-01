@@ -17,48 +17,59 @@ use App\Common\service\MenusService;
 use App\Common\service\RolesService;
 use App\Common\validate\MenusValidate;
 use App\Controller\AbstractController;
-use App\Exception\ParameterException;
 use App\helpers\Common;
 use App\ReturnData;
 use Exception;
 use Hyperf\DbConnection\Db;
 use Hyperf\Di\Annotation\Inject;
+use Hyperf\HttpServer\Contract\RequestInterface;
+use Hyperf\HttpServer\Contract\ResponseInterface;
 use Hyperf\Validation\Contract\ValidatorFactoryInterface;
 
 class MenusController extends AbstractController
 {
-    #[Inject]
     protected MenusService $menusService;
-
-    #[Inject]
     protected ValidatorFactoryInterface $validatorFactory;
 
-    // 获取菜单列表
-    public function list()
+    public function __construct(MenusService $menusService, ValidatorFactoryInterface $validatorFactory)
     {
-        $data = $this->request->all();
-        $list = $this->menusService->getMenuList($data);
-        return ReturnData::getInstance()->show($this->response, CodeResponse::SUCCESS, $list);
+        $this->menusService = $menusService;
+        $this->validatorFactory = $validatorFactory;
     }
 
-    public function operate()
+    // 获取菜单列表
+    public function list(RequestInterface $request, ResponseInterface $response)
     {
-        $data = $this->request->all();
+        $data = $request->all();
+        $list = $this->menusService->getMenuList($data);
+        return ReturnData::getInstance()->show($response, CodeResponse::SUCCESS, $list);
+    }
+
+    public function parentList(ResponseInterface $response)
+    {
+        $list = MenusService::getInstance()->getAllMenuList();
+        return ReturnData::getInstance()->show($response, CodeResponse::SUCCESS, $list);
+    }
+
+    public function operate(RequestInterface $request, ResponseInterface $response)
+    {
+        $data = $request->all();
+        $data = Common::trimArr($data);
         if (! empty($data['action'])) {
             if ($data['action'] === CodeResponse::ADD) {
-                return $this->add($data);
+                return $this->add($data, $request, $response);
             }
             if ($data['action'] === CodeResponse::EDIT) {
-                return $this->edit($data);
+                return $this->edit($data, $request, $response);
             }
         }
     }
 
     // 删除
-    public function del()
+    public function del(RequestInterface $request, ResponseInterface $response)
     {
-        (new MenusValidate())->goCheck($this->validatorFactory, 'del');
-        $data = $this->request->all();
+        (new MenusValidate())->goCheck($this->validatorFactory, $request, 'del');
+        $data = $request->all();
         Db::beginTransaction();
         try {
             $result = MenusService::getInstance()->del($data['menu_id']);
@@ -66,34 +77,34 @@ class MenusController extends AbstractController
             // 如果没有异常，则提交事务
             Db::commit();
             if ($result && $roleResult) {
-                return ReturnData::getInstance()->show($this->response, CodeResponse::MENUSDELSUCCESS);
+                return ReturnData::getInstance()->show($response, CodeResponse::MENUSDELSUCCESS);
             }
-            return ReturnData::getInstance()->show($this->response, CodeResponse::MENUSDELFAIL);
+            return ReturnData::getInstance()->show($response, CodeResponse::MENUSDELFAIL);
         } catch (Exception $e) {
             // 如果捕获到异常，则回滚事务
             Db::rollBack();
         }
     }
 
-    protected function add($data)
+    protected function add($data, $request, $response)
     {
         $data = Common::trimArr($data);
-        (new MenusValidate())->goCheck($this->validatorFactory, 'add');
+        (new MenusValidate())->goCheck($this->validatorFactory, $request, 'add');
         $result = $this->menusService->add($data);
         if ($result) {
-            return ReturnData::getInstance()->show($this->response, CodeResponse::MENUSADDSUCCESS);
+            return ReturnData::getInstance()->show($response, CodeResponse::MENUSADDSUCCESS);
         }
-        return ReturnData::getInstance()->show($this->response, CodeResponse::MENUSADDFAIL);
+        return ReturnData::getInstance()->show($response, CodeResponse::MENUSADDFAIL);
     }
 
-    protected function edit($data)
+    protected function edit($data, $request, $response)
     {
         $data = Common::trimArr($data);
-        (new MenusValidate())->goCheck($this->validatorFactory, 'edit');
+        (new MenusValidate())->goCheck($this->validatorFactory, $request, 'edit');
         $result = $this->menusService->edit($data);
         if ($result) {
-            return ReturnData::getInstance()->show($this->response, CodeResponse::MENUSEDITSUCCESS);
+            return ReturnData::getInstance()->show($response, CodeResponse::MENUSEDITSUCCESS);
         }
-        return ReturnData::getInstance()->show($this->response, CodeResponse::MENUSEDITFAIL);
+        return ReturnData::getInstance()->show($response, CodeResponse::MENUSEDITFAIL);
     }
 }

@@ -16,7 +16,6 @@ use Hyperf\HttpMessage\Stream\SwooleStream;
 
 class ReturnData
 {
-
     public static function getInstance()
     {
         return new static();
@@ -34,5 +33,12 @@ class ReturnData
             $result['data'] = $data;
         }
         return $response->setStatus($codeResponse['httpCode'] ?? 200)->setHeaders(['Content-Type' => 'application/json'])->setBody(new SwooleStream(json_encode($result)));
+    }
+
+    public static function trimArr($data)
+    {
+        return array_map(function ($value) {
+            return is_string($value) ? trim($value) : $value;
+        }, $data);
     }
 }

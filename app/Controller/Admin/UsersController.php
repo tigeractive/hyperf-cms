@@ -28,7 +28,6 @@ use Hyperf\HttpServer\Annotation\PostMapping;
 use Hyperf\HttpServer\Contract\RequestInterface;
 use Hyperf\HttpServer\Contract\ResponseInterface;
 use Hyperf\Validation\Contract\ValidatorFactoryInterface;
-use Monolog\Logger;
 
 #[Controller]
 class UsersController extends AbstractController
@@ -51,7 +50,7 @@ class UsersController extends AbstractController
             return ReturnData::getInstance()->show($response, CodeResponse::LOGINERROR);
         }
         // 判断密码是否正确
-        if ($user->password != Common::packagePassword($data['password'])) {
+        if (! password_verify($data['password'], $user->password)) {
             return ReturnData::getInstance()->show($response, CodeResponse::LOGINERROR);
         }
 

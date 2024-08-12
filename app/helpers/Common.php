@@ -44,7 +44,7 @@ class Common
 
     public static function packagePassword($password)
     {
-        return sha1(sha1($password) . CodeResponse::PWDSALT);
+        return password_hash($password, PASSWORD_DEFAULT, ['cost' => 10]);
     }
 
     // 通过递归组织数据

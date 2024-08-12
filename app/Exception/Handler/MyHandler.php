@@ -46,6 +46,7 @@ class MyHandler extends ExceptionHandler
             $this->httpCode = 503;
             $this->msg = '内部错误';
             $this->code = 999;
+            echo '';
             $this->log->logInfo('内部错误：' . $throwable->getMessage());
         }
 

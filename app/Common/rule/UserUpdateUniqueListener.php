@@ -41,7 +41,7 @@ UserUpdateUniqueListener implements ListenerInterface
             array $parameters,
             Validator $validator
         ): bool {
-            var_dump($value);
+//            var_dump($value);
             $username = $value;
             $userId = $validator->getData()['user_id'];
             $result = UsersService::getInstance()->getUserByNameNotId($userId, $username);

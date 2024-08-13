@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "a7d9df0ca1d308473b7218b683c4f0dd",
+    "content-hash": "42f007413125bcac5fbdb11a1be57c89",
     "packages": [
         {
             "name": "carbonphp/carbon-doctrine-types",
@@ -3377,16 +3377,16 @@
         },
         {
             "name": "hyperf/translation",
-            "version": "v3.1.33",
+            "version": "v3.1.35",
             "source": {
                 "type": "git",
                 "url": "https://github.com/hyperf/translation.git",
-                "reference": "0197d31c01891dda439cb464f94870eb5223f36e"
+                "reference": "2d86f014e0943e1bad06f9a95dcfb0731dcc6384"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/hyperf/translation/zipball/0197d31c01891dda439cb464f94870eb5223f36e",
-                "reference": "0197d31c01891dda439cb464f94870eb5223f36e",
+                "url": "https://api.github.com/repos/hyperf/translation/zipball/2d86f014e0943e1bad06f9a95dcfb0731dcc6384",
+                "reference": "2d86f014e0943e1bad06f9a95dcfb0731dcc6384",
                 "shasum": ""
             },
             "require": {
@@ -3425,7 +3425,7 @@
             ],
             "support": {
                 "issues": "https://github.com/hyperf/translation/issues",
-                "source": "https://github.com/hyperf/translation/tree/v3.1.33"
+                "source": "https://github.com/hyperf/translation/tree/v3.1.35"
             },
             "funding": [
                 {
@@ -3437,7 +3437,7 @@
                     "type": "open_collective"
                 }
             ],
-            "time": "2024-07-22T01:50:05+00:00"
+            "time": "2024-08-08T02:28:23+00:00"
         },
         {
             "name": "hyperf/utils",
@@ -9787,5 +9787,5 @@
         "php": ">=8.1"
     },
     "platform-dev": [],
-    "plugin-api-version": "2.3.0"
+    "plugin-api-version": "2.6.0"
 }

@@ -91,6 +91,7 @@ class MenusService extends BaseService
     public function edit($data)
     {
         if (! empty($data['parent_id_list'])) {
+            var_dump($data['parent_id_list']);
             $parentIdArr = $data['parent_id_list'];
             if (in_array($data['menu_id'], $parentIdArr)) {
                 throw new MenuParentException();
@@ -98,6 +99,7 @@ class MenusService extends BaseService
             $data['parent_id'] = $parentIdArr[count($parentIdArr) - 1];
             $data['parent_id_list'] = implode(',', $data['parent_id_list']);
         } else {
+            $data['parent_id_list'] = '';
             $data['parent_id'] = 0;
         }
         $menu = $this->model::query()->find($data['menu_id']);

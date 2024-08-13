@@ -22,6 +22,7 @@ use Hyperf\Di\Annotation\Inject;
 use Hyperf\HttpServer\Contract\RequestInterface;
 use Hyperf\HttpServer\Contract\ResponseInterface;
 use Hyperf\Validation\Contract\ValidatorFactoryInterface;
+use function Hyperf\Translation\trans;
 
 class RolesController extends AbstractController
 {
@@ -41,14 +42,14 @@ class RolesController extends AbstractController
         $data = $request->all();
         $data = Common::trimArr($data);
         $list = $this->rolesService->getRoleList($request, $data);
-        return ReturnData::getInstance()->show($response, CodeResponse::SUCCESS, $list);
+        return ReturnData::getInstance()->show($response, CodeResponse::SUCCESS, '', $list);
     }
 
     // 获取所有角色
     public function allRoles(ResponseInterface $response)
     {
         $list = $this->rolesService->getAllRoles()->toArray();
-        return ReturnData::getInstance()->show($response, CodeResponse::SUCCESS, $list);
+        return ReturnData::getInstance()->show($response, CodeResponse::SUCCESS, '', $list);
     }
 
     // 角色添加、编辑
@@ -70,13 +71,13 @@ class RolesController extends AbstractController
         (new RolesValidate())->goCheck($this->validatorFactory, $request, 'del');
         $data = $request->all();
         if ($data['role_id'] == 1) {
-            return ReturnData::getInstance()->show($response, CodeResponse::ROLESDELETEFAIL);
+            return ReturnData::getInstance()->show($response, CodeResponse::ROLESDELETEFAIL, trans('messages.RolesDeleteFail'));
         }
         $result = $this->rolesService->del($data['role_id']);
         if ($result) {
-            return ReturnData::getInstance()->show($response, CodeResponse::USERDELSUCCESS);
+            return ReturnData::getInstance()->show($response, CodeResponse::ROLESDELETESUCCESS, trans('messages.RolesDeleteSuccess'));
         }
-        return ReturnData::getInstance()->show($response, CodeResponse::ROLESDELETEFAIL);
+        return ReturnData::getInstance()->show($response, CodeResponse::ROLESDELETEFAIL, trans('messages.RolesDeleteFail'));
     }
 
     // 更新权限
@@ -85,9 +86,9 @@ class RolesController extends AbstractController
         $data = $request->all();
         $result = $this->rolesService->updatePermission($data);
         if ($result) {
-            return ReturnData::getInstance()->show($response, CodeResponse::ROLESPERMISSIONSUCCESS);
+            return ReturnData::getInstance()->show($response, CodeResponse::ROLESPERMISSIONSUCCESS, trans('messages.RolesPermissionSuccess'));
         }
-        return ReturnData::getInstance()->show($response, CodeResponse::ROLESPERMISSIONFAIL);
+        return ReturnData::getInstance()->show($response, CodeResponse::ROLESPERMISSIONFAIL, trans('messages.RolesPermissionFail'));
     }
 
     protected function add($data, $request, $response)
@@ -95,9 +96,9 @@ class RolesController extends AbstractController
         (new RolesValidate())->goCheck($this->validatorFactory, $request, 'add');
         $result = $this->rolesService->add($data);
         if ($result) {
-            return ReturnData::getInstance()->show($response, CodeResponse::ROLESADDSUCCESS);
+            return ReturnData::getInstance()->show($response, CodeResponse::ROLESADDSUCCESS, trans('messages.RolesAddSuccess'));
         }
-        return ReturnData::getInstance()->show($response, CodeResponse::ROLESADDFAIL);
+        return ReturnData::getInstance()->show($response, CodeResponse::ROLESADDFAIL, trans('messages.RolesAddFail'));
     }
 
     protected function edit($data, $request, $response)
@@ -106,8 +107,8 @@ class RolesController extends AbstractController
         $data = $request->post();
         $result = $this->rolesService->edit($data);
         if ($result) {
-            return ReturnData::getInstance()->show($response, CodeResponse::ROLESEDITSUCCESS);
+            return ReturnData::getInstance()->show($response, CodeResponse::ROLESEDITSUCCESS, trans('messages.RolesEditSuccess'));
         }
-        return ReturnData::getInstance()->show($response, CodeResponse::ROLESEDITFAIL);
+        return ReturnData::getInstance()->show($response, CodeResponse::ROLESEDITFAIL, trans('messages.RolesEditFail'));
     }
 }

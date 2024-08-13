@@ -25,6 +25,7 @@ use Hyperf\Di\Annotation\Inject;
 use Hyperf\HttpServer\Contract\RequestInterface;
 use Hyperf\HttpServer\Contract\ResponseInterface;
 use Hyperf\Validation\Contract\ValidatorFactoryInterface;
+use function Hyperf\Translation\trans;
 
 class MenusController extends AbstractController
 {
@@ -42,13 +43,13 @@ class MenusController extends AbstractController
     {
         $data = $request->all();
         $list = $this->menusService->getMenuList($data);
-        return ReturnData::getInstance()->show($response, CodeResponse::SUCCESS, $list);
+        return ReturnData::getInstance()->show($response, CodeResponse::SUCCESS, '', $list);
     }
 
     public function parentList(ResponseInterface $response)
     {
         $list = MenusService::getInstance()->getAllMenuList();
-        return ReturnData::getInstance()->show($response, CodeResponse::SUCCESS, $list);
+        return ReturnData::getInstance()->show($response, CodeResponse::SUCCESS, '', $list);
     }
 
     public function operate(RequestInterface $request, ResponseInterface $response)
@@ -77,9 +78,9 @@ class MenusController extends AbstractController
             // 如果没有异常，则提交事务
             Db::commit();
             if ($result && $roleResult) {
-                return ReturnData::getInstance()->show($response, CodeResponse::MENUSDELSUCCESS);
+                return ReturnData::getInstance()->show($response, CodeResponse::MENUSDELSUCCESS, trans('messages.MenusDelSuccess'));
             }
-            return ReturnData::getInstance()->show($response, CodeResponse::MENUSDELFAIL);
+            return ReturnData::getInstance()->show($response, CodeResponse::MENUSDELFAIL, trans('messages.MenusDelFail'));
         } catch (Exception $e) {
             // 如果捕获到异常，则回滚事务
             Db::rollBack();
@@ -92,9 +93,9 @@ class MenusController extends AbstractController
         (new MenusValidate())->goCheck($this->validatorFactory, $request, 'add');
         $result = $this->menusService->add($data);
         if ($result) {
-            return ReturnData::getInstance()->show($response, CodeResponse::MENUSADDSUCCESS);
+            return ReturnData::getInstance()->show($response, CodeResponse::MENUSADDSUCCESS, trans('messages.MenusAddSuccess'));
         }
-        return ReturnData::getInstance()->show($response, CodeResponse::MENUSADDFAIL);
+        return ReturnData::getInstance()->show($response, CodeResponse::MENUSADDFAIL, trans('messages.MenusAddFail'));
     }
 
     protected function edit($data, $request, $response)
@@ -103,8 +104,8 @@ class MenusController extends AbstractController
         (new MenusValidate())->goCheck($this->validatorFactory, $request, 'edit');
         $result = $this->menusService->edit($data);
         if ($result) {
-            return ReturnData::getInstance()->show($response, CodeResponse::MENUSEDITSUCCESS);
+            return ReturnData::getInstance()->show($response, CodeResponse::MENUSEDITSUCCESS, trans('messages.MenusEditSuccess'));
         }
-        return ReturnData::getInstance()->show($response, CodeResponse::MENUSEDITFAIL);
+        return ReturnData::getInstance()->show($response, CodeResponse::MENUSEDITFAIL, trans('messages.MenusEditFail'));
     }
 }

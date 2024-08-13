@@ -21,9 +21,9 @@ class ReturnData
         return new static();
     }
 
-    public function show($response, $codeResponse, $data = null)
+    public function show($response, $codeResponse, $msg = '', $data = null)
     {
-        $result = ['msg' => $codeResponse['msg'], 'code' => $codeResponse['code']];
+        $result = ['msg' => $msg, 'code' => $codeResponse['code']];
         if (! is_null($data)) {
             if (is_array($data)) {
                 $data = array_filter($data, function ($item) {

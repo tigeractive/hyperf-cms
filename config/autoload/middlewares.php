@@ -22,5 +22,6 @@ use App\Middleware\CorsMiddleware;
 return [
     'http' => [
         CorsMiddleware::class,
+        \App\Middleware\Lang::class,
     ],
 ];

@@ -28,6 +28,8 @@ use Hyperf\HttpServer\Annotation\PostMapping;
 use Hyperf\HttpServer\Contract\RequestInterface;
 use Hyperf\HttpServer\Contract\ResponseInterface;
 use Hyperf\Validation\Contract\ValidatorFactoryInterface;
+use Symfony\Contracts\Translation\TranslatableInterface;
+use function Hyperf\Translation\trans;
 
 #[Controller]
 class UsersController extends AbstractController
@@ -47,11 +49,11 @@ class UsersController extends AbstractController
         // 判断用户是否存在
         $user = (new UsersService())->getUserByName($data['username']);
         if (empty($user)) {
-            return ReturnData::getInstance()->show($response, CodeResponse::LOGINERROR);
+            return ReturnData::getInstance()->show($response, CodeResponse::LOGINERROR, trans('messages.LOGINERROR'));
         }
         // 判断密码是否正确
         if (! password_verify($data['password'], $user->password)) {
-            return ReturnData::getInstance()->show($response, CodeResponse::LOGINERROR);
+            return ReturnData::getInstance()->show($response, CodeResponse::LOGINERROR, trans('messages.LOGINERROR'));
         }
 
         (new UsersService())->updateLoginInfo($user->user_id, $request->getServerParams()['remote_addr'] ?? '');
@@ -63,7 +65,7 @@ class UsersController extends AbstractController
             'username' => $user->username,
             'token' => $token->toString(),
         ];
-        return ReturnData::getInstance()->show($response, CodeResponse::SUCCESS, $data);
+        return ReturnData::getInstance()->show($response, CodeResponse::SUCCESS, '', $data);
     }
 
     #[GetMapping(path: 'list')]
@@ -72,7 +74,7 @@ class UsersController extends AbstractController
     {
         $data = $request->all();
         $result = (new UsersService())->getUserList($request, $data);
-        return ReturnData::getInstance()->show($response, CodeResponse::SUCCESS, $result);
+        return ReturnData::getInstance()->show($response, CodeResponse::SUCCESS, '', $result);
     }
 
     #[GetMapping(path: 'permission')]
@@ -83,7 +85,7 @@ class UsersController extends AbstractController
             'menuList' => Context::get('menuList'),
             'actionList' => Context::get('actionList'),
         ];
-        return ReturnData::getInstance()->show($response, CodeResponse::SUCCESS, $data);
+        return ReturnData::getInstance()->show($response, CodeResponse::SUCCESS, '', $data);
     }
 
     #[PostMapping(path: 'operate')]
@@ -109,13 +111,13 @@ class UsersController extends AbstractController
         (new UsersValidate())->goCheck($this->validatorFactory, $request, 'del');
         $data = $request->all();
         if ($data['user_id'] == 1) {
-            return ReturnData::getInstance()->show($response, CodeResponse::USERDELFAIL);
+            return ReturnData::getInstance()->show($response, CodeResponse::USERDELFAIL, trans('messages.UserDelFail'));
         }
         $result = (new UsersService())->del($data['user_id']);
         if ($result) {
-            return ReturnData::getInstance()->show($response, CodeResponse::USERDELSUCCESS);
+            return ReturnData::getInstance()->show($response, CodeResponse::USERDELSUCCESS, trans('messages.UserDelSuccess'));
         }
-        return ReturnData::getInstance()->show($response, CodeResponse::USERDELFAIL);
+        return ReturnData::getInstance()->show($response, CodeResponse::USERDELFAIL, trans('messages.UserDelFail'));
     }
 
     protected function add($data, $request, $response)
@@ -124,9 +126,9 @@ class UsersController extends AbstractController
         $data['password'] = Common::packagePassword($data['password']);
         $result = UsersService::getInstance()->add($data);
         if ($result) {
-            return ReturnData::getInstance()->show($response, CodeResponse::USERADDSUCCESS);
+            return ReturnData::getInstance()->show($response, CodeResponse::USERADDSUCCESS, trans('messages.UserAddSuccess'));
         }
-        return ReturnData::getInstance()->show($response, CodeResponse::USERADDFAIL);
+        return ReturnData::getInstance()->show($response, CodeResponse::USERADDFAIL, trans('messages.UserAddFail'));
     }
 
     protected function edit($data, $request, $response)
@@ -134,8 +136,8 @@ class UsersController extends AbstractController
         (new UsersValidate())->goCheck($this->validatorFactory, $request, 'edit');
         $result = UsersService::getInstance()->edit($data);
         if ($result) {
-            return ReturnData::getInstance()->show($response, CodeResponse::USEREDITSUCCESS);
+            return ReturnData::getInstance()->show($response, CodeResponse::USEREDITSUCCESS, trans('messages.UserEditSuccess'));
         }
-        return ReturnData::getInstance()->show($response, CodeResponse::USEREDITFAIL);
+        return ReturnData::getInstance()->show($response, CodeResponse::USEREDITFAIL, trans('messages.UserEditFail'));
     }
 }

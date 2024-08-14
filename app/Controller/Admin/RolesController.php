@@ -18,7 +18,6 @@ use App\Common\validate\RolesValidate;
 use App\Controller\AbstractController;
 use App\helpers\Common;
 use App\ReturnData;
-use Hyperf\Di\Annotation\Inject;
 use Hyperf\HttpServer\Contract\RequestInterface;
 use Hyperf\HttpServer\Contract\ResponseInterface;
 use Hyperf\Validation\Contract\ValidatorFactoryInterface;
